@@ -1,6 +1,7 @@
-import { useUtils, classNames } from '@tma.js/sdk-react';
 import { type FC, type MouseEventHandler, type JSX, useCallback } from 'react';
 import { type LinkProps as NextLinkProps, default as NextLink } from 'next/link';
+
+import { useWebApp } from '@/hooks/useWebApp';
 
 import styles from './Link.module.css';
 
@@ -13,7 +14,7 @@ export const Link: FC<LinkProps> = ({
   href,
   ...rest
 }) => {
-  const utils = useUtils(true);
+  const webApp = useWebApp();
 
   const onClick = useCallback<MouseEventHandler<HTMLAnchorElement>>((e) => {
     propsOnClick?.(e);
@@ -35,16 +36,16 @@ export const Link: FC<LinkProps> = ({
 
     if (isExternal) {
       e.preventDefault();
-      utils && utils.openLink(targetUrl.toString());
+      webApp && webApp.openLink(targetUrl.toString());
     }
-  }, [href, propsOnClick, utils]);
+  }, [webApp, href, propsOnClick]);
 
   return (
     <NextLink
       {...rest}
       href={href}
       onClick={onClick}
-      className={classNames(className, styles.root)}
+      className={[className, styles.root].filter(Boolean).join(' ')}
     />
   );
 };

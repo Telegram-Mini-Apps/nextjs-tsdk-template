@@ -6,7 +6,7 @@ Mini Apps platform using the following technologies and libraries:
 - [Next.js](https://nextjs.org/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [TON Connect](https://docs.ton.org/develop/dapps/ton-connect/overview)
-- [@tma.js SDK](https://docs.telegram-mini-apps.com/packages/tma-js-sdk)
+- [Telegram SDK](https://core.telegram.org/bots/webapps#initializing-mini-apps)
 - [Telegram UI](https://github.com/Telegram-Mini-Apps/TelegramUI)
 
 > The template was created using [pnpm](https://pnpm.io/). Therefore, it is required to use
@@ -70,15 +70,6 @@ After this, you will see a similar message in your terminal:
 To view the application, you need to open the `Local`
 link (`http://localhost:3000` in this example) in your browser.
 
-It is important to note that some libraries in this template, such as `@tma.js/sdk`, are not
-intended for use outside of Telegram.
-
-Nevertheless, they appear to function properly. This is because the `src/hooks/useTelegramMock.ts`
-file, which is imported in the application's router (`src/_app.tsx`), employs the `mockTelegramEnv`
-function to simulate the Telegram environment. This trick convinces the application that it is
-running in a Telegram-based environment. Therefore, be cautious not to use this function in
-production mode unless you fully understand its implications.
-
 ### Run Inside Telegram
 
 Although it is possible to run the application outside of Telegram, it is recommended to develop it
@@ -122,3 +113,8 @@ from the creators of Next.js.
 
 Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more
 details.
+
+## Useful Links
+
+- [Platform documentation](https://docs.telegram-mini-apps.com/)
+- [Telegram developers community chat](https://t.me/devs)

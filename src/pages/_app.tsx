@@ -1,23 +1,13 @@
-import {
-  SDKProvider,
-  retrieveLaunchParams,
-  useBackButton,
-  useMiniApp,
-  useThemeParams,
-  useViewport,
-  bindMiniAppCSSVars,
-  bindThemeParamsCSSVars,
-  bindViewportCSSVars,
-  isSSR,
-} from '@tma.js/sdk-react';
 import { type FC, useEffect, useMemo } from 'react';
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
-import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import { useRouter as useNavigationRouter } from 'next/navigation';
+import Head from 'next/head';
+import type { AppProps } from 'next/app';
 
-import { useTelegramMock } from '@/hooks/useTelegramMock';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { useDidMount } from '@/hooks/useDidMount';
+import { useWebApp } from '@/hooks/useWebApp';
 
 import './global.css';
 
@@ -38,65 +28,41 @@ const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => (
 
 const BackButtonManipulator: FC = () => {
   const router = useRouter();
-  const { back } = useNavigationRouter();
-  const bb = useBackButton(true);
+  const { back } = useNavigationRouter()
+  const webApp = useWebApp();
 
   useEffect(() => {
-    if (!bb) {
+    if (!webApp) {
       return;
     }
     if (router.pathname === '/') {
-      bb.hide();
+      webApp.BackButton.isVisible && webApp.BackButton.hide();
     } else {
-      bb.show();
+      !webApp.BackButton.isVisible && webApp.BackButton.show();
     }
-  }, [router, bb]);
+  }, [webApp, router.pathname]);
 
   useEffect(() => {
-    return bb && bb.on('click', back);
-  }, [bb, back]);
+    if (!webApp) {
+      return;
+    }
+    webApp.BackButton.onClick(back);
+
+    return () => webApp.BackButton.offClick(back);
+  }, [webApp, back]);
 
   return null;
 };
 
-const App: FC<AppProps> = ({ pageProps, Component }) => {
-  const miniApp = useMiniApp(true);
-  const themeParams = useThemeParams(true);
-  const viewport = useViewport(true);
-
-  useEffect(() => {
-    return miniApp && themeParams && bindMiniAppCSSVars(miniApp, themeParams);
-  }, [miniApp, themeParams]);
-
-  useEffect(() => {
-    return themeParams && bindThemeParamsCSSVars(themeParams);
-  }, [themeParams]);
-
-  useEffect(() => {
-    return viewport && bindViewportCSSVars(viewport);
-  }, [viewport]);
-
-  return (
-    <>
-      <BackButtonManipulator/>
-      <Component {...pageProps}/>
-    </>
-  );
-};
-
-const Inner: FC<AppProps> = (props) => {
-  // Mock Telegram environment in development mode.
-  if (process.env.NODE_ENV === 'development') {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useTelegramMock();
-  }
-
-  const debug = useMemo(() => {
-    return isSSR() ? false : retrieveLaunchParams().startParam === 'debug';
-  }, []);
-  const manifestUrl = useMemo(() => {
-    return isSSR() ? '' : new URL('tonconnect-manifest.json', window.location.href).toString();
-  }, []);
+function App({ pageProps, Component }: AppProps) {
+  const didMount = useDidMount();
+  const webApp = useWebApp();
+  const debug = webApp
+    ? webApp.initDataUnsafe.start_param === 'debug'
+    : false;
+  const manifestUrl = useMemo(() => didMount
+    ? new URL('tonconnect-manifest.json', window.location.href).toString()
+    : 'tonconnect-manifest.json', [didMount]);
 
   useEffect(() => {
     if (debug) {
@@ -106,17 +72,22 @@ const Inner: FC<AppProps> = (props) => {
 
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>
-      <SDKProvider acceptCustomStyles debug={debug}>
-        <App {...props}/>
-      </SDKProvider>
+      <BackButtonManipulator/>
+      <Component {...pageProps}/>
     </TonConnectUIProvider>
   );
-};
+}
 
 export default function CustomApp(props: AppProps) {
   return (
-    <ErrorBoundary fallback={ErrorBoundaryError}>
-      <Inner {...props}/>
-    </ErrorBoundary>
+    <>
+      <Head>
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script src="https://telegram.org/js/telegram-web-app.js"/>
+      </Head>
+      <ErrorBoundary fallback={ErrorBoundaryError}>
+        <App {...props}/>
+      </ErrorBoundary>
+    </>
   );
 };

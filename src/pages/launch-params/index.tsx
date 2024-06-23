@@ -1,16 +1,10 @@
-import { retrieveLaunchParams } from '@tma.js/sdk-react';
-
 import { DisplayData } from '@/components/DisplayData/DisplayData';
 import { Link } from '@/components/Link/Link';
 import { Page } from '@/components/Page/Page';
-import { useDidMount } from '@/hooks/useDidMount';
-import { useMemo } from 'react';
+import { useWebApp } from '@/hooks/useWebApp';
 
 export default function LaunchParamsPage() {
-  const didMount = useDidMount();
-  const lp = useMemo(() => {
-    return didMount ? retrieveLaunchParams() : {} as Record<string, string>;
-  }, [didMount]);
+  const webApp = useWebApp();
 
   return (
     <Page
@@ -27,15 +21,16 @@ export default function LaunchParamsPage() {
       )}
     >
       <DisplayData
-        rows={[
-          { title: 'tgWebAppPlatform', value: lp.platform },
-          { title: 'tgWebAppShowSettings', value: lp.showSettings },
-          { title: 'tgWebAppVersion', value: lp.version },
-          { title: 'tgWebAppBotInline', value: lp.botInline },
-          { title: 'tgWebAppStartParam', value: lp.showSettings },
-          { title: 'tgWebAppData', value: <Link href="/init-data">View</Link> },
-          { title: 'tgWebAppThemeParams', value: <Link href="/theme-params">View</Link> },
-        ]}
+        rows={
+          webApp
+            ? [
+              { title: 'tgWebAppPlatform', value: webApp.platform },
+              { title: 'tgWebAppVersion', value: webApp.version },
+              { title: 'tgWebAppStartParam', value: webApp.initDataUnsafe?.start_param },
+              { title: 'tgWebAppData', value: <Link href="/init-data">View</Link> },
+              { title: 'tgWebAppThemeParams', value: <Link href="/theme-params">View</Link> },
+            ]
+            : []}
       />
     </Page>
   );

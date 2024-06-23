@@ -1,32 +1,38 @@
 import { type ReactNode, useMemo } from 'react';
-import { useInitData, retrieveLaunchParams, type User } from '@tma.js/sdk-react';
+import type { WebAppUser } from '@twa-dev/types';
 
 import { DisplayData, type DisplayDataRow } from '@/components/DisplayData/DisplayData';
 import { Link } from '@/components/Link/Link';
 import { Page } from '@/components/Page/Page';
-import { useDidMount } from '@/hooks/useDidMount';
+import { useWebApp } from '@/hooks/useWebApp';
 
 import styles from './styles.module.css';
 
-function getUserRows(user: User): DisplayDataRow[] {
+// TODO: @twa-dev/sdk is outdated, as well as @twa-dev/types.
+interface ExactWebAppUser extends WebAppUser {
+  allows_write_to_pm?: boolean;
+  added_to_attachment_menu?: boolean;
+}
+
+function getUserRows(user: ExactWebAppUser): DisplayDataRow[] {
   return [
     { title: 'id', value: user.id.toString() },
     { title: 'username', value: user.username },
-    { title: 'photo_url', value: user.photoUrl },
-    { title: 'last_name', value: user.lastName },
-    { title: 'first_name', value: user.firstName },
-    { title: 'is_bot', value: user.isBot },
-    { title: 'is_premium', value: user.isPremium },
-    { title: 'language_code', value: user.languageCode },
-    { title: 'allows_to_write_to_pm', value: user.allowsWriteToPm },
-    { title: 'added_to_attachment_menu', value: user.addedToAttachmentMenu },
+    { title: 'photo_url', value: user.photo_url },
+    { title: 'last_name', value: user.last_name },
+    { title: 'first_name', value: user.first_name },
+    { title: 'is_bot', value: user.is_bot },
+    { title: 'is_premium', value: user.is_premium },
+    { title: 'language_code', value: user.language_code },
+    { title: 'allows_to_write_to_pm', value: user.allows_write_to_pm },
+    { title: 'added_to_attachment_menu', value: user.added_to_attachment_menu },
   ];
 }
 
 export default function InitDataPage() {
-  const didMount = useDidMount();
-  const initData = useInitData(true);
-  const initDataRaw = useMemo(() => didMount ? retrieveLaunchParams().initDataRaw : '', [didMount]);
+  const webApp = useWebApp();
+  const initDataRaw = webApp ? webApp.initData : undefined;
+  const initData = webApp ? webApp.initDataUnsafe : undefined;
 
   const initDataRows = useMemo<DisplayDataRow[] | undefined>(() => {
     if (!initData || !initDataRaw) {
@@ -34,25 +40,23 @@ export default function InitDataPage() {
     }
     const {
       hash,
-      queryId,
-      chatType,
-      chatInstance,
-      authDate,
-      startParam,
-      canSendAfter,
-      canSendAfterDate,
+      start_param,
+      chat_instance,
+      chat_type,
+      auth_date,
+      can_send_after,
+      query_id,
     } = initData;
     return [
       { title: 'raw', value: initDataRaw },
-      { title: 'auth_date', value: authDate.toLocaleString() },
-      { title: 'auth_date (raw)', value: authDate.getTime() / 1000 },
+      { title: 'auth_date', value: new Date(auth_date * 1000).toLocaleString() },
+      { title: 'auth_date (raw)', value: auth_date },
       { title: 'hash', value: hash },
-      { title: 'can_send_after', value: canSendAfterDate?.toISOString() },
-      { title: 'can_send_after (raw)', value: canSendAfter },
-      { title: 'query_id', value: queryId },
-      { title: 'start_param', value: startParam },
-      { title: 'chat_type', value: chatType },
-      { title: 'chat_instance', value: chatInstance },
+      { title: 'can_send_after', value: can_send_after },
+      { title: 'query_id', value: query_id },
+      { title: 'start_param', value: start_param },
+      { title: 'chat_type', value: chat_type },
+      { title: 'chat_instance', value: chat_instance },
     ];
   }, [initData, initDataRaw]);
 
@@ -68,14 +72,14 @@ export default function InitDataPage() {
     if (!initData?.chat) {
       return;
     }
-    const { id, title, type, username, photoUrl } = initData.chat;
+    const { id, title, type, username, photo_url } = initData.chat;
 
     return [
       { title: 'id', value: id.toString() },
       { title: 'title', value: title },
       { title: 'type', value: type },
       { title: 'username', value: username },
-      { title: 'photo_url', value: photoUrl },
+      { title: 'photo_url', value: photo_url },
     ];
   }, [initData]);
 

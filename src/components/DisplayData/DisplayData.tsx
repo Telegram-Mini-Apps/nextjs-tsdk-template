@@ -1,4 +1,3 @@
-import { isRGB, type RGB as RGBType } from '@tma.js/sdk-react';
 import type { FC, ReactNode } from 'react';
 
 import { RGB } from '@/components/RGB/RGB';
@@ -7,7 +6,7 @@ import styles from './DisplayData.module.css';
 
 export interface DisplayDataRow {
   title: string;
-  value?: RGBType | string | boolean | ReactNode;
+  value?: string | boolean | ReactNode;
 }
 
 export interface DisplayDataProps {
@@ -21,7 +20,7 @@ export const DisplayData: FC<DisplayDataProps> = ({ rows }) => (
 
       if (value === undefined) {
         valueNode = <i>empty</i>;
-      } else if (typeof value === 'string' && isRGB(value)) {
+      } else if (typeof value === 'string' && value.match(/^#[a-f0-9]{3,6}$/i)) {
         valueNode = <RGB color={value} />;
       } else if (typeof value === 'boolean') {
         valueNode = value ? '✔️' : '❌';

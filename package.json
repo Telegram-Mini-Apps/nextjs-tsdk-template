@@ -10,8 +10,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@tma.js/sdk-react": "^2.2.5",
     "@tonconnect/ui-react": "^2.0.5",
+    "@twa-dev/types": "^7.0.0",
     "eruda": "^3.0.1",
     "next": "14.2.3",
     "react": "^18.3.1",

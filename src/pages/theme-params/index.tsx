@@ -1,11 +1,10 @@
-import { useThemeParams } from '@tma.js/sdk-react';
-
 import { DisplayData } from '@/components/DisplayData/DisplayData';
 import { Link } from '@/components/Link/Link';
 import { Page } from '@/components/Page/Page';
+import { useWebApp } from '@/hooks/useWebApp';
 
 export default function ThemeParamsPage() {
-  const themeParams = useThemeParams(true);
+  const webApp = useWebApp();
 
   return (
     <Page
@@ -23,15 +22,10 @@ export default function ThemeParamsPage() {
     >
       <DisplayData
         rows={
-          themeParams
+          webApp
             ? Object
-              .entries(themeParams.getState())
-              .map(([title, value]) => ({
-                title: title
-                  .replace(/[A-Z]/g, (m) => `_${m.toLowerCase()}`)
-                  .replace(/background/, 'bg'),
-                value,
-              }))
+              .entries(webApp.themeParams)
+              .map(([title, value]) => ({ title, value }))
             : []
         }
       />
