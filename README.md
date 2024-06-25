@@ -6,7 +6,6 @@ Mini Apps platform using the following technologies and libraries:
 - [Next.js](https://nextjs.org/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [TON Connect](https://docs.ton.org/develop/dapps/ton-connect/overview)
-- [Telegram SDK](https://core.telegram.org/bots/webapps#initializing-mini-apps)
 - [Telegram UI](https://github.com/Telegram-Mini-Apps/TelegramUI)
 
 > The template was created using [pnpm](https://pnpm.io/). Therefore, it is required to use
