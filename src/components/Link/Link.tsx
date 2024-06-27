@@ -1,9 +1,9 @@
 import { type FC, type MouseEventHandler, type JSX, useCallback } from 'react';
 import { type LinkProps as NextLinkProps, default as NextLink } from 'next/link';
 
-import { useWebApp } from '@/hooks/useWebApp';
+import { getWebApp } from '@/utils/getWebApp';
 
-import styles from './Link.module.css';
+import './styles.css';
 
 export interface LinkProps extends NextLinkProps, Omit<JSX.IntrinsicElements['a'], 'href'> {
 }
@@ -14,8 +14,6 @@ export const Link: FC<LinkProps> = ({
   href,
   ...rest
 }) => {
-  const webApp = useWebApp();
-
   const onClick = useCallback<MouseEventHandler<HTMLAnchorElement>>((e) => {
     propsOnClick?.(e);
 
@@ -36,16 +34,16 @@ export const Link: FC<LinkProps> = ({
 
     if (isExternal) {
       e.preventDefault();
-      webApp && webApp.openLink(targetUrl.toString());
+      getWebApp().openLink(targetUrl.toString());
     }
-  }, [webApp, href, propsOnClick]);
+  }, [href, propsOnClick]);
 
   return (
     <NextLink
       {...rest}
       href={href}
       onClick={onClick}
-      className={[className, styles.root].filter(Boolean).join(' ')}
+      className={[className, 'link'].filter(Boolean).join(' ')}
     />
   );
 };
