@@ -11,14 +11,13 @@ import './_assets/globals.css';
 export const metadata: Metadata = {
   title: 'Your Application Title Goes Here',
   description: 'Your application description goes here',
-
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
     <body>
-      <Script src="https://telegram.org/js/telegram-web-app.js" strategy="beforeInteractive"/>
+      <Script src="https://telegram.org/js/telegram-web-app.js" strategy="afterInteractive"/>
       <Root>
         {children}
       </Root>
