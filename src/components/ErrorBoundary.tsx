@@ -5,7 +5,7 @@ import {
   type PropsWithChildren,
 } from 'react';
 
-export interface ErrorBoundaryProps extends PropsWithChildren {
+interface ErrorBoundaryProps extends PropsWithChildren {
   fallback: ComponentType<{ error: Error }>;
 }
 
