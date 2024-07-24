@@ -4,8 +4,6 @@ import { type PropsWithChildren, useEffect, useMemo } from 'react';
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
 import { AppRoot } from '@telegram-apps/telegram-ui';
 
-import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { ErrorPage } from '@/components/ErrorPage';
 import { useDidMount } from '@/hooks/useDidMount';
 import { getWebApp } from '@/utils/getWebApp';
 
@@ -43,8 +41,6 @@ export function Root(props: PropsWithChildren) {
   const didMount = useDidMount();
 
   return didMount ? (
-    <ErrorBoundary fallback={ErrorPage}>
-      <RootInner {...props}/>
-    </ErrorBoundary>
+    <RootInner {...props}/>
   ) : <div className="root__loading">Loading</div>;
 }
