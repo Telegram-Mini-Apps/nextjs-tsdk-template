@@ -1,5 +1,8 @@
 # Telegram Mini Apps Next.js Template
 
+> [!WARNING]
+> This template is archived and is more likely to be out of date.
+
 This template demonstrates how developers can implement a web application on the Telegram
 Mini Apps platform using the following technologies and libraries:
 
